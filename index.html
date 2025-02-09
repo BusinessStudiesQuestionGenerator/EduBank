@@ -29,6 +29,11 @@
 </body>
 </html> -->
 
+// This handles one question at a time, they said that due to the format of the web app code,
+// Cloudflare is showing my code as an array, rather than single objects, this may be why 
+// it is undefined
+
+<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,6 +54,45 @@
                     document.getElementById("questionDisplay").innerText = data.question;
                 } else {
                     document.getElementById("questionDisplay").innerText = "No question found!";
+                }
+            } catch (error) {
+                console.error("Error fetching question:", error);
+                document.getElementById("questionDisplay").innerText = "Error loading question.";
+            }
+        }
+    </script>
+</head>
+<body onload="loadQuestion()">
+    <h1>Random Question Generator</h1>
+    <p id="questionDisplay">Loading question...</p>
+    <button onclick="loadQuestion()">Get New Question</button>
+</body>
+</html>
+-->
+
+// Chatgpt says this code should be able to handle the array properly
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Question Generator</title>
+    <script>
+        async function loadQuestion() {
+            try {
+                let response = await fetch("https://little-frog-4a3f.robothu21.workers.dev/");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch questions");
+                }
+                let data = await response.json();
+                
+                // Ensure data is an array and select a random question
+                if (Array.isArray(data) && data.length > 0) {
+                    let randomIndex = Math.floor(Math.random() * data.length);
+                    document.getElementById("questionDisplay").innerText = data[randomIndex].question;
+                } else {
+                    throw new Error("No questions found");
                 }
             } catch (error) {
                 console.error("Error fetching question:", error);
