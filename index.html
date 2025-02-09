@@ -121,6 +121,19 @@ it is undefined-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Question Generator</title>
+    <style>
+        /* Style for the container */
+        #questionContainer {
+            border: 2px solid #4CAF50;  /* Green border */
+            padding: 20px;
+            border-radius: 8px;         /* Rounded corners */
+            margin-top: 20px;
+            background-color: #f9f9f9;  /* Light background */
+            max-width: 600px;           /* Max width */
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
     <script>
         async function loadQuestion() {
             try {
@@ -144,11 +157,22 @@ it is undefined-->
         }
     </script>
 </head>
+<!--
 <body onload="loadQuestion()">
     <h1>Random Question Generator</h1>
     <button onclick="loadQuestion()">Get New Question</button>
     <p id="questionDisplay">Loading question...</p>
     
+</body>
+-->
+<body onload="loadQuestion()">
+    <h1>Random Question Generator</h1>
+    <button onclick="loadQuestion()">Get New Question</button>
+
+    <!-- Question container -->
+    <div id="questionContainer">
+        <p id="questionDisplay">Loading question...</p>
+    </div>
 </body>
 </html>
 
