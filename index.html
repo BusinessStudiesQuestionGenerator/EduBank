@@ -136,6 +136,7 @@ it is undefined-->
     </style>
     <script>
         async function loadQuestion() {
+            console.log("Fetching question...");
             try {
                 let response = await fetch("https://little-frog-4a3f.robothu21.workers.dev/");
                 if (!response.ok) {
