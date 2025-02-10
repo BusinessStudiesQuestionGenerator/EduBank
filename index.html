@@ -271,19 +271,18 @@ This one only does one question at a time -->
 
     <style>
         #questionDisplay {
-            width: 60%;  /* Adjust width as needed */
+            width: 60%;  
             margin: 20px auto;
             padding: 15px;
             border: 2px solid #ccc;
             border-radius: 10px;
             background-color: #f9f9f9;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-            min-height: 50px; /* Ensure it has some height even when empty */
-            max-height: 400px; /* Optional: Set max height to prevent excessive expansion */
-            overflow-y: auto; /* Adds a scrollbar if there are too many questions */
+            min-height: 50px; 
+            max-height: 400px; 
+            overflow-y: auto; 
         }
 
-        /* Add spacing between questions */
         #questionDisplay p {
             margin-bottom: 10px;
             font-size: 16px;
@@ -305,16 +304,14 @@ This one only does one question at a time -->
                     throw new Error("No questions found");
                 }
 
-                // Get the selected number of questions from the dropdown
+                // Get the selected number of questions from localStorage or dropdown
                 let numQuestions = parseInt(document.getElementById("questionCount").value);
 
-                // Shuffle the questions and get the desired amount
+                // Shuffle and display questions
                 let shuffledQuestions = data.sort(() => Math.random() - 0.5).slice(0, numQuestions);
-
-                // Display the questions
                 let questionContainer = document.getElementById("questionDisplay");
-                questionContainer.innerHTML = ""; // Clear previous questions
-                
+                questionContainer.innerHTML = "";
+
                 shuffledQuestions.forEach((q, index) => {
                     let questionElement = document.createElement("p");
                     questionElement.innerText = `${index + 1}. ${q.question}`;
@@ -327,21 +324,27 @@ This one only does one question at a time -->
             }
         }
 
-        // Ensure dropdown remembers last selected value
         document.addEventListener("DOMContentLoaded", () => {
             let dropdown = document.getElementById("questionCount");
-            dropdown.value = localStorage.getItem("questionCount") || "1";
             
+            // Retrieve last selected value or default to 1
+            let storedValue = localStorage.getItem("questionCount") || "1";
+            dropdown.value = storedValue;
+
+            // Ensure questions load with the stored selection on refresh
+            loadQuestions();
+
+            // Save selection when changed
             dropdown.addEventListener("change", () => {
                 localStorage.setItem("questionCount", dropdown.value);
+                loadQuestions(); // Load new number of questions immediately
             });
         });
     </script>
 </head>
-<body onload="loadQuestions()">
+<body>
     <h1>Random Question Generator</h1>
     
-    <!-- Dropdown for selecting the number of questions -->
     <label for="questionCount">Number of Questions:</label>
     <select id="questionCount">
         <option value="1">1</option>
@@ -353,7 +356,6 @@ This one only does one question at a time -->
 
     <button onclick="loadQuestions()">Get New Questions</button>
     
-    <!-- Container to display the questions -->
     <div id="questionDisplay"></div>
 </body>
 </html>
