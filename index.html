@@ -177,6 +177,7 @@ This one only does one question at a time -->
 -->
 
 <!-- This code allows you to generate several question rather than just 1 -->
+<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -233,6 +234,108 @@ This one only does one question at a time -->
                 document.getElementById("questionDisplay").innerText = "Error loading questions.";
             }
         }
+    </script>
+</head>
+
+
+<body onload="loadQuestions()">
+    <h1>Random Question Generator</h1>
+-->
+    <!-- Dropdown for selecting the number of questions -->
+<!--
+    <label for="questionCount">Number of Questions:</label>
+    <select id="questionCount">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+    </select>
+
+    <button onclick="loadQuestions()">Get New Questions</button>
+-->
+    <!-- Container to display the questions -->
+<!--
+    <div id="questionDisplay"></div>
+</body>
+</html>
+-->
+
+<!-- Version 2 of the code above, so that we can select multiple questions -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Question Generator</title>
+
+    <style>
+        #questionDisplay {
+            width: 60%;  /* Adjust width as needed */
+            margin: 20px auto;
+            padding: 15px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            min-height: 50px; /* Ensure it has some height even when empty */
+            max-height: 400px; /* Optional: Set max height to prevent excessive expansion */
+            overflow-y: auto; /* Adds a scrollbar if there are too many questions */
+        }
+
+        /* Add spacing between questions */
+        #questionDisplay p {
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+    
+    <script>
+        async function loadQuestions() {
+            try {
+                let response = await fetch("https://little-frog-4a3f.robothu21.workers.dev/");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch questions");
+                }
+                let data = await response.json();
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    throw new Error("No questions found");
+                }
+
+                // Get the selected number of questions from the dropdown
+                let numQuestions = parseInt(document.getElementById("questionCount").value);
+
+                // Shuffle the questions and get the desired amount
+                let shuffledQuestions = data.sort(() => Math.random() - 0.5).slice(0, numQuestions);
+
+                // Display the questions
+                let questionContainer = document.getElementById("questionDisplay");
+                questionContainer.innerHTML = ""; // Clear previous questions
+                
+                shuffledQuestions.forEach((q, index) => {
+                    let questionElement = document.createElement("p");
+                    questionElement.innerText = `${index + 1}. ${q.question}`;
+                    questionContainer.appendChild(questionElement);
+                });
+
+            } catch (error) {
+                console.error("Error fetching question:", error);
+                document.getElementById("questionDisplay").innerText = "Error loading questions.";
+            }
+        }
+
+        // Ensure dropdown remembers last selected value
+        document.addEventListener("DOMContentLoaded", () => {
+            let dropdown = document.getElementById("questionCount");
+            dropdown.value = localStorage.getItem("questionCount") || "1";
+            
+            dropdown.addEventListener("change", () => {
+                localStorage.setItem("questionCount", dropdown.value);
+            });
+        });
     </script>
 </head>
 <body onload="loadQuestions()">
