@@ -3,108 +3,9 @@ Cloudflare is showing my code as an array, rather than single objects, this may 
 it is undefined"-->
 
 <!--Chatgpt says this code should be able to handle the array properly-->
-<!--
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Question Generator</title>
-    <script>
-        /*
-        async function loadQuestion() {
-            try {
-                let response = await fetch("https://little-frog-4a3f.robothu21.workers.dev/");
-                if (!response.ok) {
-                    throw new Error("Failed to fetch questions");
-                }
-                let data = await response.json();
-                
-                // Ensure data is an array and select a random question
-                if (Array.isArray(data) && data.length > 0) {
-                    let randomIndex = Math.floor(Math.random() * data.length);
-                    document.getElementById("questionDisplay").innerText = data[randomIndex].question;
-                } else {
-                    throw new Error("No questions found");
-                }
-            } catch (error) {
-                console.error("Error fetching question:", error);
-                document.getElementById("questionDisplay").innerText = "Error loading question.";
-            }
-        }
-        */
-    </script>
-</head>
-<body onload="loadQuestion()">
-    <h1>Random Question Generator</h1>
-    <p id="questionDisplay">Loading question...</p>
-    <button onclick="loadQuestion()">Get New Question</button>
-</body>
-</html>
--->
 
 <!--This is a second attempt at handling arrays by checking if the response is an array.
 This one only does one question at a time -->
-<!--
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Question Generator</title>
-    <style>
-        /* Style for the container */
-        #questionContainer {
-            border: 2px solid #4CAF50;  /* Green border */
-            padding: 20px;
-            border-radius: 8px;         /* Rounded corners */
-            margin-top: 20px;
-            background-color: #f9f9f9;  /* Light background */
-            max-width: 600px;           /* Max width */
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
-    <script>
-        /*
-        async function loadQuestion() {
-            console.log("Fetching question...");
-            try {
-                let response = await fetch("https://little-frog-4a3f.robothu21.workers.dev/");
-                if (!response.ok) {
-                    throw new Error("Failed to fetch questions");
-                }
-                let data = await response.json();
-
-                if (!Array.isArray(data) || data.length === 0) {
-                    throw new Error("No questions found");
-                }
-
-                // Select a random question from the array
-                let randomQuestion = data[Math.floor(Math.random() * data.length)];
-                document.getElementById("questionDisplay").innerText = randomQuestion.question;
-            } catch (error) {
-                console.error("Error fetching question:", error);
-                document.getElementById("questionDisplay").innerText = "Error loading question.";
-            }
-        }
-    */
-    </script>
-</head>
-
-<body onload="loadQuestion()">
-    <h1>Random Question Generator</h1>
-    <button onclick="loadQuestion()">Get New Question</button>
--->
-
-    <!-- Question container -->
-<!--
-    <div id="questionContainer">
-        <p id="questionDisplay">Loading question...</p>
-    </div>
-</body>
-</html>
--->
 
 <!-- This code allows you to generate several question rather than just 1 -->
 <!--
@@ -192,6 +93,7 @@ This one only does one question at a time -->
 -->
 
 <!-- Version 2 of the code above, so that we can select multiple questions -->
+<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -286,6 +188,109 @@ This one only does one question at a time -->
 
     <button onclick="loadQuestions()">Get New Questions</button>
     
+    <div id="questionDisplay"></div>
+</body>
+</html>
+-->
+
+<!-- This code is for handling multiple topics and number of questions-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Question Generator</title>
+    <script>
+        let allQuestions = []; // Store all questions globally
+
+        async function fetchQuestions() {
+            try {
+                let response = await fetch("https://little-frog-4a3f.robothu21.workers.dev/"); // Replace with your Cloudflare URL
+                if (!response.ok) {
+                    throw new Error("Failed to fetch questions");
+                }
+                allQuestions = await response.json();
+
+                if (!Array.isArray(allQuestions) || allQuestions.length === 0) {
+                    throw new Error("No questions found");
+                }
+
+                populateTopics(); // Populate the topics dropdown
+                loadQuestions(); // Load questions initially
+
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+                document.getElementById("questionDisplay").innerText = "Error loading questions.";
+            }
+        }
+
+        function populateTopics() {
+            let topicDropdown = document.getElementById("topicFilter");
+            let uniqueTopics = [...new Set(allQuestions.map(q => q.topic))]; // Get unique topics
+
+            topicDropdown.innerHTML = ""; // Clear existing options
+
+            // Always include "All Topics" as the first option
+            let allOption = document.createElement("option");
+            allOption.value = "all";
+            allOption.innerText = "All Topics";
+            topicDropdown.appendChild(allOption);
+
+            // Add unique topics from the dataset
+            uniqueTopics.forEach(topic => {
+                if (topic) { // Ensure topic is not empty
+                    let option = document.createElement("option");
+                    option.value = topic;
+                    option.innerText = topic;
+                    topicDropdown.appendChild(option);
+                }
+            });
+        }
+
+        function loadQuestions() {
+            let numQuestions = parseInt(document.getElementById("questionCount").value);
+            let selectedTopic = document.getElementById("topicFilter").value;
+
+            // Filter questions based on the selected topic
+            let filteredQuestions = selectedTopic === "all" ? allQuestions : allQuestions.filter(q => q.topic === selectedTopic);
+
+            // Shuffle and select the desired number of questions
+            let selectedQuestions = filteredQuestions.sort(() => Math.random() - 0.5).slice(0, numQuestions);
+
+            let questionContainer = document.getElementById("questionDisplay");
+            questionContainer.innerHTML = ""; // Clear previous questions
+
+            selectedQuestions.forEach((q, index) => {
+                let questionElement = document.createElement("p");
+                questionElement.innerText = `${index + 1}. ${q.question}`;
+                questionContainer.appendChild(questionElement);
+            });
+        }
+    </script>
+</head>
+<body onload="fetchQuestions()">
+    <h1>Random Question Generator</h1>
+
+    <!-- Dropdown for selecting the number of questions -->
+    <label for="questionCount">Number of Questions:</label>
+    <select id="questionCount" onchange="loadQuestions()">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+    </select>
+
+    <!-- Dropdown for filtering by topic -->
+    <label for="topicFilter">Select Topic:</label>
+    <select id="topicFilter" onchange="loadQuestions()">
+        <option value="all">All Topics</option> <!-- Default option -->
+    </select>
+
+    <button onclick="loadQuestions()">Get New Questions</button>
+
+    <!-- Container to display the questions -->
     <div id="questionDisplay"></div>
 </body>
 </html>
