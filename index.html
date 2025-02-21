@@ -205,6 +205,18 @@ This one only does one question at a time -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Question Generator</title>
+    
+    <style>
+        select {
+            display: block;
+            margin: 10px 0;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+    
     <script>
         let allQuestions = []; // Store all questions globally
 
@@ -215,7 +227,7 @@ This one only does one question at a time -->
                     throw new Error("Failed to fetch questions");
                 }
                 allQuestions = await response.json();
-                console.log(allQuestions);  // Check if data is loaded correctly
+                // console.log(allQuestions);  // Check if data is loaded correctly
 
                 if (!Array.isArray(allQuestions) || allQuestions.length === 0) {
                     throw new Error("No questions found");
