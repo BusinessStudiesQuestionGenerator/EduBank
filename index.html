@@ -411,7 +411,7 @@ as choice of how many questions + topic choice -->
 
             selectedQuestions.forEach((q, index) => {
                 let questionElement = document.createElement("p");
-                questionElement.innerText = `${index + 1}. ${q.question} (${q.type})`;
+                questionElement.innerText = `${index + 1}. ${q.question}`;
                 questionContainer.appendChild(questionElement);
             });
         }
